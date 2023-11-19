@@ -1,0 +1,35 @@
+{{block "Todolist" .}}
+
+<div
+  id="todo{{.Id}}"
+  class="border 
+        font-medium border-blue-500 text-blue-400 font-mono py-2 px-3 
+        flex justify-between animate-fade-in w-full animate-fade-out
+        {{if.Done}}bg-blue-500 text-white{{end}}    
+        "
+>
+  <input type="hidden" value="0" name="selfdestruct" />
+  <input
+    {{if.Done}}class="accent-white"
+    {{end}}
+    {{if.Done}}checked{{end}}
+    type="checkbox"
+    name="done"
+    hx-put="/update-todo/{{.Id}}"
+    hx-trigger="change"
+    hx-target="closest div"
+    hx-swap="outerHTML"
+    hx-include="#done{{.Id}}"
+  />
+  <input type="hidden" name="done" value="off" id="done{{.Id}}" />
+  <h2 class="text-wrap">{{.Value}}</h2>
+  <button
+    hx-delete="/remove-todo/{{.Id}}"
+    hx-target="closest div"
+    hx-swap="outerHTML swap:1s"
+    class="text-sm"
+  >
+    Delete
+  </button>
+</div>
+{{end}}

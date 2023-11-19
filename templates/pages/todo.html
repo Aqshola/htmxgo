@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo app</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@4.4.2/dist/full.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script
+      src="https://unpkg.com/htmx.org@1.9.8"
+      integrity="sha384-rgjA7mptc2ETQqXoYC3/zJvkU7K/aP44Y+z7xQuJiVnB/422P/Ak+F/AqFR7E4Wr"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <style>
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+      }
+    }
+
+    @keyframes fade-out {
+      to {
+        opacity: 0;
+      }
+    }
+
+    @keyframes slide-from-right {
+      from {
+        transform: translateX(90px);
+      }
+    }
+
+    @keyframes slide-from-left {
+      from {
+        transform: translateX(-90px);
+      }
+    }
+
+    @keyframes slide-to-right {
+      from {
+        transform: translateX(0px);
+      }
+    }
+
+    @keyframes slide-to-left {
+      to {
+        transform: translateX(-90px);
+      }
+    }
+
+    ::view-transition-old(slide-it) {
+      animation: 180ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
+        600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left;
+    }
+    ::view-transition-new(slide-it) {
+      animation: 420ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in,
+        600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right;
+    }
+
+    .animate-fade-in {
+      animation: 420ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in,
+        600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-left;
+    }
+
+    .animate-fade-out.htmx-swapping {
+      animation: 420ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-out,
+        600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left;
+    }
+  </style>
+
+  <body class="bg-black min-h-screen bg-white">
+    <div class="max-w-screen-xl mx-auto p-10">
+      <h1 class="text-black font-mono font-bold text-2xl text-center">
+        List Todo
+      </h1>
+      <form
+        class="mt-5 w-72 mx-auto"
+        hx-post="/add-todo/"
+        hx-target="#todo-list"
+        hx-swap="beforeend  transition:true"
+        hx-on::after-request="if(event.detail.successful) this.reset()"
+      >
+        <div class="form-control w-full max-w-xs">
+          <label class="label" for="title">
+            <span class="label-text">Activity</span>
+          </label>
+          <input
+            required
+            name="value"
+            id="value"
+            type="text"
+            placeholder="Value"
+            class="input input-bordered w-full max-w-xs bg-white"
+          />
+        </div>
+        <button type="submit" class="btn w-full btn-sm mt-2">Add Todo</button>
+      </form>
+      <div class="flex mx-auto flex-col gap-2 mt-5 w-72" id="todo-list">
+        {{range .Todos}} {{template "Todolist" .}} {{end}}
+      </div>
+    </div>
+  </body>
+</html>
